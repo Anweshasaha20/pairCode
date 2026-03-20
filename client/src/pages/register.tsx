@@ -6,9 +6,6 @@ import { Button } from "@/components/ui/button";
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,6 +13,11 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     setErrorMsg("");
     setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const username = String(formData.get("username") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
 
     try {
       await axios.post(
@@ -52,8 +54,7 @@ const RegisterPage: React.FC = () => {
             <input
               type="text"
               id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              name="username"
               placeholder="Enter username"
               className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
               required
@@ -70,8 +71,7 @@ const RegisterPage: React.FC = () => {
             <input
               type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
               placeholder="Enter your email"
               className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
               required
@@ -88,8 +88,7 @@ const RegisterPage: React.FC = () => {
             <input
               type="password"
               id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
               placeholder="Enter your password"
               className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
               required
