@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const RegisterPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -19,15 +18,15 @@ const RegisterPage: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/users/register",
-        { username, email, password },
+        "http://localhost:3000/api/users/login",
+        { email, password },
         { withCredentials: true },
       );
 
       navigate("/dashboard");
     } catch (error: any) {
       const message =
-        error?.response?.data?.message || "Registration failed. Try again.";
+        error?.response?.data?.message || "Login failed. Try again.";
       setErrorMsg(message);
     } finally {
       setIsLoading(false);
@@ -35,31 +34,13 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-linear-to-r from-cyan-500 to-blue-700">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-cyan-600">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Create Account
+          Welcome Back
         </h2>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              required
-            />
-          </div>
-
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -73,7 +54,7 @@ const RegisterPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -91,7 +72,7 @@ const RegisterPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -101,16 +82,16 @@ const RegisterPage: React.FC = () => {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full px-4 py-2 text-white bg-cyan-600 rounded-lg hover:bg-cyan-700"
+            className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
           >
-            {isLoading ? "Creating account..." : "Register"}
+            {isLoading ? "Logging in..." : "Login"}
           </Button>
         </form>
 
         <p className="mt-4 text-sm text-center text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-500 hover:underline">
-            Login
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Sign up
           </Link>
         </p>
       </div>
@@ -118,4 +99,4 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
