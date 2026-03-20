@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import  {Github} from "lucide-react";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -87,6 +88,19 @@ const LoginPage: React.FC = () => {
             {isLoading ? "Logging in..." : "Login"}
           </Button>
         </form>
+
+        
+        <div className="mt-6">
+          <button
+            onClick={() => {
+              window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/github`; // Replace with your GitHub OAuth endpoint
+            }}
+            className="w-full px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900 flex items-center justify-center"
+          >
+            <Github className="w-5 h-5 mr-2" /> {/* Use Lucide React GitHub icon */}
+            Login with GitHub
+          </button>
+        </div>
 
         <p className="mt-4 text-sm text-center text-gray-600">
           Don&apos;t have an account?{" "}

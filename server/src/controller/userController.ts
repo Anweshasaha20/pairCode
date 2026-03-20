@@ -103,7 +103,7 @@ export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
     });
     return;
   }
-  const isMatch = await bcrypt.compare(password, userdetail.password);
+  const isMatch = await bcrypt.compare(password, userdetail.password?.toString() || "");
   if (!isMatch) {
     res.status(400).json({
       message: "Password is incorrect",
