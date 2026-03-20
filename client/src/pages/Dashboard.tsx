@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
+import { createDashboardSocket, sendHello } from "@/utils/websocket";
+type WSMessage = {
+  type: string;
+  message?: string;
+};
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const socketRef = useRef<WebSocket | null>(null);
 
   const handleCreateRoom = () => {
     // replace with your create-room flow later
@@ -14,6 +20,26 @@ const Dashboard: React.FC = () => {
   const handleJoinRoom = () => {
     // replace with your join-room flow later
     navigate("/join-room");
+  };
+
+  useEffect(() => {
+    const socket = createDashboardSocket((message) => {
+      alert(message);
+    });
+
+    socketRef.current = socket;
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  const handleHello = () => {
+    const isSent = sendHello(socketRef.current);
+
+    if (!isSent) {
+      alert("Socket not connected yet");
+    }
   };
 
   return (
@@ -33,6 +59,12 @@ const Dashboard: React.FC = () => {
             className="h-12 text-base bg-blue-600 hover:bg-blue-700"
           >
             Create Room
+          </Button>
+          <Button
+            onClick={handleHello}
+            className="h-12 text-base bg-emerald-600 hover:bg-emerald-700"
+          >
+            Hello
           </Button>
 
           <Button

@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
 import cors from "cors";
+import { setupWebSocket } from "./utils/wsServer";
 
 dotenv.config();
 connectDB();
@@ -12,6 +13,8 @@ connectDB();
 const app = express();
 const server = createServer(app);
 
+//websocket
+setupWebSocket(server);
 app.use(express.json());
 app.use(cookieParser());
 app.use(
