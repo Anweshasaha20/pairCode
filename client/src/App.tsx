@@ -4,6 +4,7 @@ import LoginPage from "./pages/Login_new";
 import Dashboard from "./pages/Dashboard";
 import RegisterPage from "./pages/register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CodeEditor from "./components/CodeEditor";
 function App() {
   return (
     <>
@@ -11,7 +12,22 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/room/:roomId"
+            element={
+              <ProtectedRoute>
+                <CodeEditor />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

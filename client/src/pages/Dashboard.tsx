@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import { createDashboardSocket, sendHello } from "@/utils/websocket";
+import axios from "axios";
 type WSMessage = {
   type: string;
   message?: string;
@@ -12,9 +13,26 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const socketRef = useRef<WebSocket | null>(null);
 
-  const handleCreateRoom = () => {
-    // replace with your create-room flow later
-    navigate("/create-room");
+  const handleCreateRoom = async () => {
+    const roomName = prompt("Enter room name");
+    if (!roomName || !roomName.trim()) return;
+
+    try {
+      const res = await axios.post("http://localhost:3000/api/users/rooms", {
+        roomName: roomName.trim(),
+        language: "javascript",
+      });
+
+      const roomId = res.data?.room?._id;
+      if (!roomId) {
+        alert("Room created but id missing");
+        return;
+      }
+
+      navigate(`/room/${roomId}`);
+    } catch (error: any) {
+      alert(error?.response?.data?.message || "Failed to create room");
+    }
   };
 
   const handleJoinRoom = () => {
