@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
 import cors from "cors";
 import { setupWebSocket } from "./utils/wsServer";
 
@@ -24,6 +25,7 @@ app.use(
   }),
 );
 app.use("/api/users", userRoutes);
+app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
 

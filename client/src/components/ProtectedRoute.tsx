@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
@@ -7,37 +7,36 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const verifyAuth = async () => {
+    const checkAuth = async () => {
       try {
-        await axios.get("http://localhost:3000/api/users/dashboard");
-        setIsAuthenticated(true);
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/auth/validate`,
+          {
+            withCredentials: true,
+          },
+        );
+
+        if (response.status === 200) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch {
         setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    verifyAuth();
+    checkAuth();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-sm text-gray-600">Checking session...</p>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  if (isAuthenticated === false) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return isAuthenticated ? children : null;
 };
 
 export default ProtectedRoute;
