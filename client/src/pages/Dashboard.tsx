@@ -3,9 +3,14 @@ import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import { HelloListener, addListener, sendMessage } from "@/utils/websocket";
 import axios from "axios";
+import {  useEffect } from "react";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+     addListener("HELLO_ALERT", HelloListener);
+  },[]);
 
   const handleCreateRoom = async () => {
     const roomName = prompt("Enter room name");
@@ -35,12 +40,14 @@ const Dashboard: React.FC = () => {
   };
 
   const handleHello = () => {
+
+   
     const isSent = sendMessage({
       type: "HELLO_CLICKED",
       payload: { message: "Hello from Dashboard!" },
     });
 
-    addListener("HELLO_ALERT", HelloListener);
+    
 
     if (!isSent) {
       alert("Socket not connected yet");
