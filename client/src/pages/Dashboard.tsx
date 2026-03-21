@@ -36,7 +36,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleJoinRoom = () => {
-    // replace with your join-room flow later
+    // replace with your join-room flow
     navigate("/join-room");
   };
 
@@ -68,7 +68,7 @@ const Dashboard: React.FC = () => {
           <LogoutButton />
         </div>
         <p className="text-center text-gray-600 mb-8">
-          Start a new collaboration or join an existing room
+          Start a new collaboration
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
