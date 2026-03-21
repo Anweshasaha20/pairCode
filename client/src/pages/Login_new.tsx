@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import  {Github} from "lucide-react";
+import { Github } from "lucide-react";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
         { withCredentials: true },
       );
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Login failed. Try again.";
@@ -89,7 +89,6 @@ const LoginPage: React.FC = () => {
           </Button>
         </form>
 
-        
         <div className="mt-6">
           <button
             onClick={() => {
@@ -97,7 +96,8 @@ const LoginPage: React.FC = () => {
             }}
             className="w-full px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900 flex items-center justify-center"
           >
-            <Github className="w-5 h-5 mr-2" /> {/* Use Lucide React GitHub icon */}
+            <Github className="w-5 h-5 mr-2" />{" "}
+            {/* Use Lucide React GitHub icon */}
             Login with GitHub
           </button>
         </div>

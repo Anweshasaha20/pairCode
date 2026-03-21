@@ -26,7 +26,7 @@ const RegisterPage: React.FC = () => {
         { withCredentials: true },
       );
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Registration failed. Try again.";

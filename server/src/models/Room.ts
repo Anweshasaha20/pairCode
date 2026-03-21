@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 
 export interface IRoom extends Document {
-  roomId: string;
+  roomName: string;
   code: string;
   language: string;
   createdBy?: mongoose.Types.ObjectId;
@@ -10,7 +10,7 @@ export interface IRoom extends Document {
 
 const roomSchema = new mongoose.Schema<IRoom>(
   {
-    roomId: { type: String, unique: true },
+    roomName: { type: String, default: "" },
     code: { type: String, default: "" },
     language: { type: String, default: "javascript" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
