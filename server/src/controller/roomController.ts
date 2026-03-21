@@ -26,6 +26,7 @@ export const createRoom = asyncHandler(
       code: "",
       language: language || "javascript",
       createdBy: req.user._id,
+      users: [req.user._id],
       isActive: true,
     });
     await room.save();
@@ -36,3 +37,35 @@ export const createRoom = asyncHandler(
     });
   },
 );
+
+export const joinRoom = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { roomId } = req.body;
+  
+  if (!roomId) {
+    res.status(400).json({ message: "Room ID is required" });
+    return;
+  }
+
+  const room = await Room.findById(roomId);
+
+  if (!room) {
+    res.status(404).json({ message: "Room not found" });
+    return;
+  }
+
+  const updatedRoom = await Room.findByIdAndUpdate(
+    roomId,
+    { $addToSet: { users: req.user?._id}},
+    { new: true },
+  );
+
+  if (!updatedRoom) {
+    res.status(404).json({ message: "Room not found" });
+    return;
+  }
+
+  res.status(200).json({
+    message: "Joined room successfully",
+    room: updatedRoom,
+  });
+});

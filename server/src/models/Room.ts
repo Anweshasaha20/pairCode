@@ -5,6 +5,7 @@ export interface IRoom extends Document {
   code: string;
   language: string;
   createdBy?: mongoose.Types.ObjectId;
+  users: mongoose.Types.ObjectId[];
   isActive: boolean;
 }
 
@@ -14,6 +15,7 @@ const roomSchema = new mongoose.Schema<IRoom>(
     code: { type: String, default: "" },
     language: { type: String, default: "javascript" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true },

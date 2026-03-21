@@ -3,14 +3,15 @@ import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import { HelloListener, addListener, sendMessage } from "@/utils/websocket";
 import axios from "axios";
-import {  useEffect } from "react";
+import {  useEffect, useState } from "react";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-
+  const [roomLink, setRoomLink] = useState("");
+  
   useEffect(() => {
-     addListener("HELLO_ALERT", HelloListener);
-  },[]);
+    addListener("HELLO_ALERT", HelloListener);
+  }, []);
 
   const handleCreateRoom = async () => {
     const roomName = prompt("Enter room name");
@@ -34,9 +35,30 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleJoinRoom = () => {
-    // replace with your join-room flow
-    navigate("/join-room");
+  const handleJoinRoom = async () => {
+    const trimmedLink = roomLink.trim();
+    if (!trimmedLink) {
+      alert("Please enter a room link");
+      return;
+    }
+
+    const roomId = trimmedLink.split("/").pop();
+    if (!roomId) {
+      alert("Invalid room link");
+      return;
+    }
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/users/join-room`,
+      { roomId },
+      { withCredentials: true },
+    );
+
+    if (res.status === 200) {
+      navigate(`/room/${roomId}`);
+    } else {
+      alert(res.data?.message || "Failed to join room");
+    }
   };
 
   const handleHello = () => {
@@ -79,10 +101,23 @@ const Dashboard: React.FC = () => {
             Hello
           </Button>
 
+          
+        </div>
+         <div className="mt-8">
+          <label htmlFor="roomLink" className="block text-gray-700 font-medium mb-2">
+            Enter Room Link:
+          </label>
+          <input
+            id="roomLink"
+            type="text"
+            value={roomLink}
+            onChange={(e) => setRoomLink(e.target.value)}
+            placeholder="Enter room link here"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
           <Button
             onClick={handleJoinRoom}
-            variant="outline"
-            className="h-12 text-base border-blue-600 text-blue-700 hover:bg-blue-50"
+            className="w-full mt-4 h-12 text-base bg-blue-600 hover:bg-blue-700"
           >
             Join Room
           </Button>
