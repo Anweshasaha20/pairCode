@@ -1,41 +1,30 @@
-import React, { useEffect, useRef } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
-import { createDashboardSocket, sendHello } from "@/utils/websocket";
-type WSMessage = {
-  type: string;
-  message?: string;
-};
+import { HelloListener, addListener , sendMessage } from "@/utils/websocket";
+
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const socketRef = useRef<WebSocket | null>(null);
 
   const handleCreateRoom = () => {
-    // replace with your create-room flow later
     navigate("/create-room");
   };
 
   const handleJoinRoom = () => {
-    // replace with your join-room flow later
     navigate("/join-room");
   };
 
-  useEffect(() => {
-    const socket = createDashboardSocket((message) => {
-      alert(message);
-    });
-
-    socketRef.current = socket;
-
-    return () => {
-      socket.close();
-    };
-  }, []);
-
   const handleHello = () => {
-    const isSent = sendHello(socketRef.current);
+    const isSent = sendMessage(
+      {
+        type: "HELLO_CLICKED",
+        payload: { message: "Hello from Dashboard!" }
+      }
+    );
+
+    addListener("HELLO_ALERT", HelloListener);
 
     if (!isSent) {
       alert("Socket not connected yet");

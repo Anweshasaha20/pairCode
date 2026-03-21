@@ -16,7 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           `${import.meta.env.VITE_BACKEND_URL}/auth/validate`,
           {
             withCredentials: true,
-          },
+          }
         );
 
         if (response.status === 200) {

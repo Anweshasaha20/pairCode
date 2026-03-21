@@ -28,6 +28,7 @@ const DEFAULT_CODE: Record<string, string> = {
 };
 
 export default function CodeEditor() {
+  
   const [langId, setLangId] = useState("cpp");
   const [code, setCode] = useState(DEFAULT_CODE["cpp"]);
   const [isDark, setIsDark] = useState(true);
