@@ -1,15 +1,32 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
-import { HelloListener, addListener , sendMessage } from "@/utils/websocket";
-
+import { HelloListener, addListener, sendMessage } from "@/utils/websocket";
+import axios from "axios";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleCreateRoom = () => {
-    navigate("/create-room");
+  const handleCreateRoom = async () => {
+    const roomName = prompt("Enter room name");
+    if (!roomName || !roomName.trim()) return;
+
+    try {
+      const res = await axios.post("http://localhost:3000/api/users/rooms", {
+        roomName: roomName.trim(),
+        language: "javascript",
+      });
+
+      const roomId = res.data?.room?._id;
+      if (!roomId) {
+        alert("Room created but id missing");
+        return;
+      }
+
+      navigate(`/room/${roomId}`);
+    } catch (error: any) {
+      alert(error?.response?.data?.message || "Failed to create room");
+    }
   };
 
   const handleJoinRoom = () => {
@@ -18,12 +35,10 @@ const Dashboard: React.FC = () => {
   };
 
   const handleHello = () => {
-    const isSent = sendMessage(
-      {
-        type: "HELLO_CLICKED",
-        payload: { message: "Hello from Dashboard!" }
-      }
-    );
+    const isSent = sendMessage({
+      type: "HELLO_CLICKED",
+      payload: { message: "Hello from Dashboard!" },
+    });
 
     addListener("HELLO_ALERT", HelloListener);
 
@@ -40,7 +55,7 @@ const Dashboard: React.FC = () => {
           <LogoutButton />
         </div>
         <p className="text-center text-gray-600 mb-8">
-          Start a new collaboration
+          Start a new collaboration or join an existing room to code together in real-time!
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
