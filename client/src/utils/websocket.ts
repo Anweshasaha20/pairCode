@@ -1,19 +1,19 @@
+export type WSpayload = {
+  type: string;
+  payload?: any;
+};
 
-  export type WSpayload = {
-    type: string;
-    payload?: any;
-  }
-
-let socket : WebSocket | null = null;
-  type listener = (data:any)=>void;
-  const listeners : Record<string, listener[]> = {};
+let socket: WebSocket | null = null;
+type listener = (data: any) => void;
+const listeners: Record<string, listener[]> = {};
 
 export function initSocket() {
-  if(socket && socket.readyState === WebSocket.OPEN) {
+  if (socket && socket.readyState === WebSocket.OPEN) {
     return socket;
   }
 
   socket = new WebSocket(`${import.meta.env.VITE_WS_URL}`);
+  console.log("WebSocket initialized", socket);
 
   socket.onmessage = (event) => {
     try {
@@ -28,15 +28,15 @@ export function initSocket() {
 }
 
 export function getsocket() {
-  if(!socket || socket.readyState !== WebSocket.OPEN) {
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
     console.warn("WebSocket is not connected");
     return null;
   }
   return socket;
 }
 
-export function sendMessage(data:WSpayload){
-  if(!socket || socket.readyState !== WebSocket.OPEN) {
+export function sendMessage(data: WSpayload) {
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
     console.warn("WebSocket is not connected");
     return false;
   }
@@ -44,8 +44,8 @@ export function sendMessage(data:WSpayload){
   return true;
 }
 
-export function addListener(type:string , listener:(data:any)=>void){
-  if(!listeners[type]) {
+export function addListener(type: string, listener: (data: any) => void) {
+  if (!listeners[type]) {
     listeners[type] = [];
   }
   if (!listeners[type].includes(listener)) {
@@ -53,4 +53,6 @@ export function addListener(type:string , listener:(data:any)=>void){
   }
 }
 
-export const HelloListener = (data: WSpayload) => {alert(data.payload?.message)}; 
+export const HelloListener = (data: WSpayload) => {
+  alert(data.payload?.message);
+};
