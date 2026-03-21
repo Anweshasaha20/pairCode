@@ -48,7 +48,9 @@ export function addListener(type:string , listener:(data:any)=>void){
   if(!listeners[type]) {
     listeners[type] = [];
   }
-  listeners[type].push(listener);
+  if (!listeners[type].includes(listener)) {
+    listeners[type].push(listener);
+  }
 }
 
 export const HelloListener = (data: WSpayload) => {alert(data.payload?.message)}; 
