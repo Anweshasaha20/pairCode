@@ -1,6 +1,5 @@
 import { Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
-
 interface WSMessage {
   type: string;
   payload?: any;
@@ -20,7 +19,9 @@ export function setupWebSocket(server: Server) {
         if (data.type === "HELLO_CLICKED") {
           const sendData = JSON.stringify({
             type: "HELLO_ALERT",
-            payload: { message: data.payload.message || "Another user clicked Hello" },
+            payload: {
+              message: data.payload.message || "Another user clicked Hello",
+            },
           });
 
           clients.forEach((client) => {

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node ./src/index.ts"
+    "dev": "nodemon --exec ts-node ./src/index.ts",
+    "yjs": "ts-node ./src/yjsServer.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.1",
     "nodemon": "^3.1.14",
-    "ws": "^8.19.0"
+    "ws": "^8.19.0",
+    "y-websocket": "^3.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

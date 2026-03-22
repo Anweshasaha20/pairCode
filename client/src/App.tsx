@@ -1,18 +1,27 @@
 import "./App.css";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { LiveblocksProvider } from "@liveblocks/react/suspense";
 import LoginPage from "./pages/Login_new";
 import Dashboard from "./pages/Dashboard";
 import RegisterPage from "./pages/register";
 import ProtectedRoute from "./components/ProtectedRoute";
-import  CodeEditor from "./components/CodeEditor";
+
 import { initSocket } from "./utils/websocket";
 import { useEffect } from "react";
+import RoomEditorPage from "./pages/RoomEditorPage";
+
 function App() {
   useEffect(() => {
     initSocket(); // Initialize WebSocket on app load
   }, []);
+
   return (
-    <>
+    <LiveblocksProvider
+      publicApiKey={
+        import.meta.env.VITE_LIVEBLOCKS_PUBLIC_KEY ||
+        "pk_dev_kwl_UDz22TSg-quMcRzBFIHwV4UmLObkpVKdFiDdnGZ8GypX0gY3CJXBFUKsprIr"
+      }
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -29,14 +38,25 @@ function App() {
             path="/room/:roomId"
             element={
               <ProtectedRoute>
-                <CodeEditor />
+                <RoomEditorPage />
               </ProtectedRoute>
             }
           />
-          <Route path="/editor" element={<ProtectedRoute><CodeEditor/></ProtectedRoute>}/>
+          {/* <Route
+            path="/editor"
+            element={
+              <ProtectedRoute>
+                <RoomProvider id="my-room">
+                  <ClientSideSuspense fallback={<div>Loading...</div>}>
+                    <CodeEditor />
+                  </ClientSideSuspense>
+                </RoomProvider>
+              </ProtectedRoute>
+            }
+          /> */}
         </Routes>
       </BrowserRouter>
-    </>
+    </LiveblocksProvider>
   );
 }
 
