@@ -6,7 +6,7 @@ interface ShareButtonProps {
 
 const ShareButton: React.FC<ShareButtonProps> = ({ roomId }) => {
   const [copied, setCopied] = useState(false);
-
+  
   const handleShare = () => {
     const shareableLink = `${window.location.origin}/room/${roomId}`;
     navigator.clipboard.writeText(shareableLink).then(() => {
