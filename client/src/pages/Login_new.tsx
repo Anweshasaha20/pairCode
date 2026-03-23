@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/users/login",
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
         { email, password },
         { withCredentials: true },
       );

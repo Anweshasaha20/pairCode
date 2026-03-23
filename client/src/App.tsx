@@ -18,7 +18,7 @@ function App() {
   return (
     <LiveblocksProvider
       publicApiKey={
-        import.meta.env.VITE_LIVEBLOCKS_PUBLIC_KEY 
+        "pk_dev_kwl_UDz22TSg-quMcRzBFIHwV4UmLObkpVKdFiDdnGZ8GypX0gY3CJXBFUKsprIr"
       }
     >
       <BrowserRouter>

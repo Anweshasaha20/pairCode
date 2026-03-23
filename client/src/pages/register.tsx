@@ -21,7 +21,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/users/register",
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/register`,
         { username, email, password },
         { withCredentials: true },
       );
