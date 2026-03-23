@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
     if (!roomName || !roomName.trim()) return;
 
     try {
-      const res = await axios.post("http://localhost:3000/api/users/rooms", {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/rooms`, {
         roomName: roomName.trim(),
         language: "javascript",
       });
