@@ -52,7 +52,6 @@ export function addListener(type: string, listener: (data: any) => void) {
     listeners[type].push(listener);
   }
 }
-
 export const HelloListener = (data: WSpayload) => {
   alert(data.payload?.message);
 };

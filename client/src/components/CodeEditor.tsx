@@ -7,7 +7,6 @@ import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
 import type { Awareness as YProtocolAwareness } from "y-protocols/awareness";
-import { useParams, useNavigate } from "react-router-dom";
 
 const LANGUAGES = [
   { id: "cpp", label: "C++", file: "main.cpp" },
@@ -62,7 +61,7 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
 
   const room = useRoom();
   const yProvider = getYjsProviderForRoom(room);
-  const navigate = useNavigate();
+ 
 
   useEffect(() => {
     let binding: MonacoBinding;
