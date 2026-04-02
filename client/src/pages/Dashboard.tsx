@@ -1,17 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
-import { HelloListener, addListener, sendMessage } from "@/utils/websocket";
+
 import axios from "axios";
-import {  useEffect, useState } from "react";
+import {  useState } from "react";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [roomLink, setRoomLink] = useState("");
   
-  useEffect(() => {
-    addListener("HELLO_ALERT", HelloListener);
-  }, []);
+ 
 
   const handleCreateRoom = async () => {
     const roomName = prompt("Enter room name");
@@ -61,20 +59,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleHello = () => {
-
-   
-    const isSent = sendMessage({
-      type: "HELLO_CLICKED",
-      payload: { message: "Hello from Dashboard!" },
-    });
-
-    
-
-    if (!isSent) {
-      alert("Socket not connected yet");
-    }
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-cyan-600 to-blue-700 flex items-center justify-center px-4">
@@ -94,12 +79,7 @@ const Dashboard: React.FC = () => {
           >
             Create Room
           </Button>
-          <Button
-            onClick={handleHello}
-            className="h-12 text-base bg-emerald-600 hover:bg-emerald-700"
-          >
-            Hello
-          </Button>
+         
 
           
         </div>

@@ -1,4 +1,4 @@
-import  ShareButton  from "@/components/ShareButton"; 
+import ShareButton from "@/components/ShareButton";
 import { useRoom } from "@liveblocks/react/suspense";
 import { getYjsProviderForRoom } from "@liveblocks/yjs";
 // import { useRoom } from "../../liveblocks.config";
@@ -7,6 +7,13 @@ import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
 import type { Awareness as YProtocolAwareness } from "y-protocols/awareness";
+import {
+  addListener,
+  joinRoom,
+  removeListener,
+  sendLanguageChanged,
+  WS_EVENTS,
+} from "@/utils/websocket";
 
 const LANGUAGES = [
   { id: "cpp", label: "C++", file: "main.cpp" },
@@ -34,8 +41,8 @@ const DEFAULT_CODE: Record<string, string> = {
   json: `{\n  "message": "Hello, World!",\n  "version": 1\n}\n`,
 };
 
-interface EditorProp { 
-  Id : string;
+interface EditorProp {
+  Id: string;
 }
 
 export default function CollaborativeEditor({ Id }: EditorProp) {
@@ -46,10 +53,11 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
   const [cursor, setCursor] = useState({ line: 1, col: 1 });
   const [copied, setCopied] = useState(false);
   const currentLang = LANGUAGES.find((l) => l.id === langId)!;
-  const roomId : string = Id;
+  const roomId: string = Id;
   const handleLangChange = (id: string) => {
     setLangId(id);
     setCode(DEFAULT_CODE[id] ?? "");
+    sendLanguageChanged(roomId, id);
   };
 
   const handleCopy = useCallback(() => {
@@ -61,7 +69,6 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
 
   const room = useRoom();
   const yProvider = getYjsProviderForRoom(room);
- 
 
   useEffect(() => {
     let binding: MonacoBinding;
@@ -82,6 +89,26 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
       binding?.destroy();
     };
   }, [editorRef, room]);
+
+  useEffect(() => {
+    joinRoom(roomId);
+
+    const onLanguageChanged = (data: any) => {
+      const incomingRoomId = data?.payload?.roomId;
+      const incomingLang = data?.payload?.language;
+
+      if (incomingRoomId !== roomId) return;
+      if (!incomingLang) return;
+
+      setLangId(incomingLang);
+    };
+
+    addListener(WS_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
+
+    return () => {
+      removeListener(WS_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
+    };
+  }, [roomId]);
 
   const handleOnMount = useCallback((e: editor.IStandaloneCodeEditor) => {
     setEditorRef(e);
@@ -104,7 +131,7 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
   //     }}
   //   />
   // );
-   return (
+  return (
     <div
       className="flex flex-col w-full h-screen"
       style={{ background: isDark ? "#0d1117" : "#f6f8fa" }}

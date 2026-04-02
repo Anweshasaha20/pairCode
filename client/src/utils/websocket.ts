@@ -2,13 +2,22 @@ export type WSpayload = {
   type: string;
   payload?: any;
 };
+export const WS_EVENTS = {
+  JOIN_ROOM: "JOIN_ROOM",
+  LANGUAGE_CHANGED: "LANGUAGE_CHANGED",
+  HELLO_CLICKED: "HELLO_CLICKED",
+} as const;
 
 let socket: WebSocket | null = null;
 type listener = (data: any) => void;
 const listeners: Record<string, listener[]> = {};
 
 export function initSocket() {
-  if (socket && socket.readyState === WebSocket.OPEN) {
+ if (
+    socket &&
+    (socket.readyState === WebSocket.OPEN ||
+      socket.readyState === WebSocket.CONNECTING)
+  ) {
     return socket;
   }
 
@@ -52,6 +61,23 @@ export function addListener(type: string, listener: (data: any) => void) {
     listeners[type].push(listener);
   }
 }
+
+export function removeListener(type: string, listener: listener) {
+  if (!listeners[type]) return;
+  listeners[type] = listeners[type].filter((l) => l !== listener);
+}
 export const HelloListener = (data: WSpayload) => {
   alert(data.payload?.message);
 };
+export function joinRoom(roomId: string) {
+  return sendMessage({
+    type: WS_EVENTS.JOIN_ROOM,
+    payload: { roomId },
+  });
+}
+export function sendLanguageChanged(roomId: string, language: string) {
+  return sendMessage({
+    type: WS_EVENTS.LANGUAGE_CHANGED,
+    payload: { roomId, language },
+  });
+}
