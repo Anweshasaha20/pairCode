@@ -48,24 +48,39 @@ interface EditorProp {
 export default function CollaborativeEditor({ Id }: EditorProp) {
   const [editorRef, setEditorRef] = useState<editor.IStandaloneCodeEditor>();
   const [langId, setLangId] = useState("cpp");
-  const [code, setCode] = useState(DEFAULT_CODE["cpp"]);
   const [isDark, setIsDark] = useState(true);
   const [cursor, setCursor] = useState({ line: 1, col: 1 });
   const [copied, setCopied] = useState(false);
   const currentLang = LANGUAGES.find((l) => l.id === langId)!;
   const roomId: string = Id;
+
   const handleLangChange = (id: string) => {
     setLangId(id);
-    setCode(DEFAULT_CODE[id] ?? "");
+
+    const yDoc = yProvider.getYDoc();
+    const yText = yDoc.getText("monaco");
+
+    const defaultCode = DEFAULT_CODE[id] ?? "";
+
+    yDoc.transact(() => {
+      yText.delete(0, yText.length);
+      yText.insert(0, defaultCode);
+    });
+
     sendLanguageChanged(roomId, id);
   };
 
-  const handleCopy = useCallback(() => {
+  const handleCopy = () => {
+    const code = yProvider
+    .getYDoc()
+    .getText("monaco")
+    .toString();
+    
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
-  }, [code]);
+  };
 
   const room = useRoom();
   const yProvider = getYjsProviderForRoom(room);
@@ -118,19 +133,6 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
     });
   }, []);
 
-  // return (
-  //   <Editor
-  //     onMount={handleOnMount}
-  //     height="100vh"
-  //     width="100%"
-  //     theme="vs-daark"
-  //     defaultLanguage="typescript"
-  //     defaultValue=""
-  //     options={{
-  //       tabSize: 2,
-  //     }}
-  //   />
-  // );
   return (
     <div
       className="flex flex-col w-full h-screen"
@@ -248,9 +250,7 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
         <Editor
           height="100%"
           language={langId}
-          value={code}
           theme={isDark ? "vs-dark" : "light"}
-          onChange={(value) => setCode(value ?? "")}
           onMount={handleOnMount}
           options={{
             fontSize: 14,
