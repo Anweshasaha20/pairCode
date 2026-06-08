@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, login, logout } from "../controller/userController";
+import { register, login, logout , codeExecutor } from "../controller/userController";
 import { auth } from "../middleware/auth";
 import { createRoom  , joinRoom} from "../controller/roomController";
 
@@ -12,5 +12,7 @@ router.post("/logout", logout);
 
 router.post("/rooms", auth, createRoom);
 router.post("/join-room" , auth , joinRoom);
+
+router.post("/run", auth, codeExecutor);
 
 export default router;

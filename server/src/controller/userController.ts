@@ -4,6 +4,8 @@ import type { Iuser } from "../models/User";
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import {languageMap} from "../config/data";
+import axios from "axios";
 
 const cookieOptions = {
   httpOnly: true,
@@ -133,4 +135,22 @@ export const logout = asyncHandler(async (_req: Request, res: Response) => {
   res.status(200).json({
     message: "Logout successful",
   });
+});
+
+export const codeExecutor = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const response = await axios.post(
+    "https://api.onlinecompiler.io/api/run-code-sync/",
+    {
+      compiler: languageMap[req.body.language],
+      code: req.body.code,
+      input: req.body.input,
+    },
+    {
+      headers: {
+        Authorization: process.env.ONLINE_COMPILER_API_KEY,
+      },
+    }
+  );
+
+  res.json(response.data);
 });

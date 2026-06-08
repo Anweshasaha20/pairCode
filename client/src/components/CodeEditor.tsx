@@ -3,6 +3,7 @@ import { useRoom } from "@liveblocks/react/suspense";
 import { getYjsProviderForRoom } from "@liveblocks/yjs";
 // import { useRoom } from "../../liveblocks.config";
 import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
 import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
@@ -53,6 +54,8 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
   const [copied, setCopied] = useState(false);
   const currentLang = LANGUAGES.find((l) => l.id === langId)!;
   const roomId: string = Id;
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
 
   const handleLangChange = (id: string) => {
     setLangId(id);
@@ -75,7 +78,7 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
     .getYDoc()
     .getText("monaco")
     .toString();
-    
+
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
@@ -132,6 +135,30 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
       setCursor({ line: pos?.lineNumber ?? 1, col: pos?.column ?? 1 });
     });
   }, []);
+
+  const handleRun = async () => {
+    const code = editorRef?.getValue() ?? "";
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/run`,
+        {
+          code,
+          stdin: input,
+          language: langId,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const result = res.data;
+      console.log(result);
+      setOutput(result.output || result.error || "No output");
+    } catch (err: any) {
+      setOutput(err?.response?.data || String(err));
+    }
+  };
 
   return (
     <div
@@ -246,8 +273,12 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
       </div>
 
       {/* ── Editor ── */}
-      <div className="flex-1 overflow-hidden">
-        <Editor
+    {/* Main Workspace */}
+<div className="flex flex-1 overflow-hidden">
+
+  {/* Editor */}
+  <div className="flex-1 overflow-hidden">
+    <Editor
           height="100%"
           language={langId}
           theme={isDark ? "vs-dark" : "light"}
@@ -269,7 +300,94 @@ export default function CollaborativeEditor({ Id }: EditorProp) {
             wordWrap: "on",
           }}
         />
+  </div>
+
+  {/* Right Console */}
+  <div
+  className="w-[380px] border-l flex flex-col"
+  style={{
+    background: isDark ? "#161b22" : "#ffffff",
+    borderColor: isDark ? "#30363d" : "#d0d7de",
+  }}>
+    {/* Console Header */}
+    <div
+      className="flex items-center justify-between px-4 py-2 border-b"
+      style={{
+        borderColor: isDark ? "#30363d" : "#d0d7de",
+      }}
+    >
+      <span
+        style={{
+          color: isDark ? "#e6edf3" : "#24292f",
+        }}
+      >
+        Console
+      </span>
+
+      <button
+        onClick={handleRun}
+        className="px-4 py-1.5 rounded-md text-white"
+        style={{
+          background: "maroon",
+        }}
+      >
+        Run
+      </button>
+    </div>
+
+    {/* Input */}
+    <div
+      className="h-1/3 border-b flex flex-col"
+      style={{
+        borderColor: isDark ? "#30363d" : "#d0d7de",
+      }}
+    >
+      <div
+        className="px-3 py-2 text-sm"
+        style={{
+          color: isDark ? "#8b949e" : "#57606a",
+        }}
+      >
+        STDIN
       </div>
+
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Enter input..."
+        className="flex-1 resize-none outline-none p-3"
+        style={{
+          background: isDark ? "#0d1117" : "#ffffff",
+          color: isDark ? "#e6edf3" : "#24292f",
+        }}
+      />
+    </div>
+
+    {/* Output */}
+    <div className="flex-1 flex flex-col">
+      <div
+        className="px-3 py-2 text-sm"
+        style={{
+          color: isDark ? "#8b949e" : "#57606a",
+        }}
+      >
+        OUTPUT
+      </div>
+
+      <pre
+        className="flex-1 overflow-auto p-3"
+        style={{
+          background: isDark ? "#0d1117" : "#ffffff",
+          color: isDark ? "#e6edf3" : "#24292f",
+        }}
+      >
+        {output || "Run code to see output"}
+      </pre>
+    </div>
+  </div>
+
+</div>
+
 
       {/* ── Status bar ── */}
       <div

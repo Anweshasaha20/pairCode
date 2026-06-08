@@ -16,7 +16,7 @@
   "type": "commonjs",
   "dependencies": {
     "@types/cookie-parser": "^1.4.10",
-    "axios": "^1.13.6",
+    "axios": "^1.17.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
